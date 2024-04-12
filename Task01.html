@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Country, State, City Selector</title>
+
+    
+    <!-- css cdn link  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+    <!-- js cdn link  -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script> 
+
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container bg-warning mt-4 p-5">
+        <select id="countrySelect" onchange="showStates()">
+            <option value="">Select Country</option>
+            <option value="USA">USA</option>
+            <option value="India">India</option>
+            <option value="UK">UK</option>
+        </select>
+    
+        <select id="stateSelect" class="hidden" onchange="showCities()">
+            <option value="">Select State</option>
+        </select>
+    
+        <select id="citySelect" class="hidden">
+            <option value="">Select City</option>
+        </select>
+    
+        <button class="btn btn-outline-success" onclick="submitSelection()">Submit</button>
+    </div>
+
+    <div class="container">
+        <table id="selectedData" class="hidden  table table-dark table-hover">
+            <thead>
+                <tr>
+                    <th>Country</th>
+                    <th>State</th>
+                    <th>City</th>
+                    <th>Save</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        var selectedState = ""; // Variable to store the selected state
+
+        function showStates() {
+            var countrySelect = document.getElementById("countrySelect");
+            var stateSelect = document.getElementById("stateSelect");
+            stateSelect.innerHTML = "<option value=''>Select State</option>"; // Add the "Select State" option
+
+            if (countrySelect.value === "USA") {
+                stateSelect.classList.remove("hidden");
+                var states = ["California", "New York", "Texas"];
+                populateSelect(stateSelect, states);
+            } else if (countrySelect.value === "India") {
+                stateSelect.classList.remove("hidden");
+                var states = ["Maharashtra", "Uttar Pradesh", "Tamil Nadu"];
+                populateSelect(stateSelect, states);
+            } else if (countrySelect.value === "UK") {
+                stateSelect.classList.remove("hidden");
+                var states = ["England", "Scotland", "Wales"];
+                populateSelect(stateSelect, states);
+            } else {
+                stateSelect.classList.add("hidden");
+            }
+
+            // Set the previously selected state as the selected option
+            if (selectedState) {
+                var option = document.createElement('option');
+                option.text = selectedState;
+                stateSelect.add(option);
+            }
+        }
+
+        function populateSelect(selectElement, options) {
+            options.forEach(function(optionText) {
+                var option = document.createElement("option");
+                option.text = optionText;
+                selectElement.add(option);
+            });
+        }
+
+        function showCities() {
+            var citySelect = document.getElementById("citySelect");
+            citySelect.classList.remove("hidden");
+            var cities = [];
+            if (document.getElementById("stateSelect").value === "California") {
+                cities = ["Los Angeles", "San Francisco", "San Diego"];
+            } else if (document.getElementById("stateSelect").value === "New York") {
+                cities = ["New York City", "Buffalo", "Rochester"];
+            } else if (document.getElementById("stateSelect").value === "Texas") {
+                cities = ["Houston", "Dallas", "Austin"];
+            } else if (document.getElementById("stateSelect").value === "Maharashtra") {
+                cities = ["Mumbai", "Pune", "Nagpur"];
+            } else if (document.getElementById("stateSelect").value === "Uttar Pradesh") {
+                cities = ["Lucknow", "Kanpur", "Varanasi"];
+            } else if (document.getElementById("stateSelect").value === "Tamil Nadu") {
+                cities = ["Chennai", "Coimbatore", "Madurai"];
+            } else if (document.getElementById("stateSelect").value === "England") {
+                cities = ["London", "Manchester", "Birmingham"];
+            } else if (document.getElementById("stateSelect").value === "Scotland") {
+                cities = ["Glasgow", "Edinburgh", "Aberdeen"];
+            } else if (document.getElementById("stateSelect").value === "Wales") {
+                cities = ["Cardiff", "Swansea", "Newport"];
+            }
+
+            citySelect.innerHTML = "<option value=''>Select City</option>";
+            populateSelect(citySelect, cities);
+        }
+
+        function submitSelection() {
+            var country = document.getElementById("countrySelect").value;
+            var state = document.getElementById("stateSelect").value;
+            var city = document.getElementById("citySelect").value;
+
+            if (country && state && city) {
+                var table = document.getElementById("selectedData");
+                var newRow = table.insertRow();
+                newRow.insertCell().textContent = country;
+                newRow.insertCell().textContent = state;
+                newRow.insertCell().textContent = city;
+                
+                // Save Button
+                var saveButton = document.createElement("button");
+                saveButton.textContent = "Save";
+                saveButton.onclick = function() {
+                    alert("Data saved successfully!");
+                };
+                newRow.insertCell().appendChild(saveButton);
+                
+                // Delete Button
+                var deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.onclick = function() {
+                    deleteRowConfirmation(newRow);
+                };
+                newRow.insertCell().appendChild(deleteButton);
+
+                table.classList.remove("hidden");
+            } else {
+                alert("Please select country, state, and city.");
+            }
+        }
+
+        function deleteRowConfirmation(row) {
+            var confirmation = confirm("Are you sure you want to delete this row?");
+            if (confirmation) {
+                row.parentNode.removeChild(row);
+            }
+        }
+
+        // Store the selected state
+        document.getElementById("stateSelect").addEventListener("change", function() {
+            selectedState = this.value;
+        });
+    </script>
+
+    <!-- HTML Structure:
+
+We have dropdowns to select a country, state, and city.
+There's a "Submit" button to add the selected data to a table.
+Below the table, we'll display the selected data.
+JavaScript Functions:
+
+showStates(): This function gets called when you select a country. It shows the corresponding states in the state dropdown based on the selected country.
+populateSelect(): This function helps in filling dropdown options dynamically.
+showCities(): It populates the cities dropdown based on the selected state.
+submitSelection(): This function is called when the "Submit" button is clicked. It checks if all dropdowns have values selected. If so, it adds the selected data to the table.
+deleteRowConfirmation(): It confirms whether you want to delete a row when the "Delete" button is clicked.
+Adding Rows to Table:
+
+When you click "Submit", it adds a new row to the table with the selected country, state, and city.
+For each row, we also add a "Save" button to demonstrate some functionality. This button doesn't actually save data to a server, it just shows an alert.
+Deleting Rows from Table:
+
+When you click "Delete" on any row, it asks for confirmation. If confirmed, it removes the row from the table.
+Storing Selected State:
+
+We store the selected state in the selectedState variable. This helps in pre-selecting the state dropdown when the country is changed.
+Overall, the code is a simple example demonstrating how to dynamically populate dropdowns, add rows to a table, delete rows from the table, and handle basic user interactions. -->
+
+
+<!-- When you click the delete button associated with a row in the table, the corresponding row is hidden or removed from the table. Here's how it happens:
+
+Event Binding: When the page loads, each "Delete" button in the table is associated with a JavaScript function (in this case, deleteRowConfirmation()). This function handles the deletion of the row.
+
+Confirmation Dialog: When you click the "Delete" button, the deleteRowConfirmation() function gets executed. This function displays a confirmation dialog asking if you're sure you want to delete the row.
+
+Handling Deletion: If you confirm deletion by clicking "OK" in the confirmation dialog, the deleteRowConfirmation() function proceeds to delete the row. It does so by accessing the row associated with the delete button that was clicked and removing it from the table's DOM structure.
+
+Effect: The row is either completely removed from the table (parentNode.removeChild(row)), or it might be hidden depending on how the page is designed. In this case, it's being completely removed.
+
+User Feedback: After the row is removed, there might be some form of user feedback, such as an alert or a message on the page, indicating that the deletion was successful.
+
+In essence, clicking the delete button triggers a JavaScript function that interacts with the HTML structure of the table, specifically removing the row associated with the clicked button. -->
+</body>
+</html>
